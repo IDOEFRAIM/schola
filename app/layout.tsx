@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
+import { MobileHeader } from '@/components/mobile-header'
+import { Sidebar } from '@/components/sidebar'
+import { ReactQueryClientProvider } from "@/components/ReactQueryClientProvider";
+import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -15,8 +18,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <ReactQueryClientProvider>
+          <html lang="en">
+      <body className={inter.className}>
+      
+      <div className="max-w-[1300px] mx-auto">
+      <MobileHeader />
+      <Sidebar className="hidden lg:flex" />
+      <main className="lg:pl-[256px] h-full pt-[50px] lg:pt-0 m">
+        <div className="max-w-[1056px] mx-auto pt-6 h-full ml-9">
+          
+          {children}
+        </div>
+      </main>      </div>
+      <Toaster />
+      </body>
     </html>
+    </ReactQueryClientProvider>
+
   );
 }

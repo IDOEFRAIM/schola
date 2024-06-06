@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mongodb"
+  url          = env("MDATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Articles {
+  id                String               @id @default(auto()) @map("_id") @db.ObjectId
+  slug              String               
+  title             String               @unique
+  body              String
+  headerImg         String
+  category          CategoryArticle      @relation(fields: [categoryArticleId], references: [id])
+  categoryArticleId String               @db.ObjectId
+  comments         Comment[]
+  author String?
+  helper String?
+
+}
+
+model CategoryArticle {
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
+  name     String     @unique
+  articles Articles[]
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  text   String
+  author     User?     @relation(fields: [authorEmail], references: [email])
+  authorEmail String
+  article     Articles?   @relation(fields: [articleId], references: [id])
+  articleId String               @db.ObjectId
+  reply CommentReply[]
+}
+model CommentReply{
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  replyText   String
+  author     String
+  comment     Comment  @relation(fields: [commentId], references: [id])
+  commentId String               @db.ObjectId
+}
+model User {
+  id        String               @id @default(auto()) @map("_id") @db.ObjectId
+  email     String               @unique
+  username  String?
+  password  String
+  comments  Comment[] 
+  preferences String[]
+  createdAt   DateTime @default(now())
+  updateAt    DateTime @updatedAt
+  role        Role     @default(USER)
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
